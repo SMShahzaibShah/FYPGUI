@@ -1,28 +1,44 @@
-import * as React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import * as React from "react"
+import { SafeAreaProvider } from "react-native-safe-area-context"
+import { createStackNavigator } from "@react-navigation/stack"
 
-import { Onboarding } from "./src/Authentication";
-import { LoadAssets } from "./src/components";
+import {
+	assets as authenticationAssets,
+	AuthenticationNavigator,
+} from "./src/Authentication"
+import { ThemeProvider } from "./src/components/Theme"
+import { LoadAssets } from "./src/components"
+import { HomeNavigator, assets as homeAssets } from "./src/Home"
+import { AppRoutes } from "./src/components/Navigation"
+
+const assets = [...authenticationAssets, homeAssets]
 
 const fonts = {
-  "SFProText-Bold": require("./assets/fonts/SF-Pro-Text-Bold.ttf"),
-  "SFProText-Semibold": require("./assets/fonts/SF-Pro-Text-Light.ttf"),
-  "SFProText-Regular": require("./assets/fonts/SF-Pro-Text-Regular.ttf"),
-};
+	Bold: require("./assets/fonts/SFPro-Display-Bold.ttf"),
+	SemiBold: require("./assets/fonts/SFPro-Display-Semibold.ttf"),
+	Medium: require("./assets/fonts/SFPro-Display-Medium.ttf"),
+	Regular: require("./assets/fonts/SFPro-Display-Regular.ttf"),
+}
 
-const AuthenticationStack = createStackNavigator();
-const AuthenticationNavigator = () => {
-  return (
-    <AuthenticationStack.Navigator headerMode="none">
-      <AuthenticationStack.Screen name="Onboarding" component={Onboarding} />
-    </AuthenticationStack.Navigator>
-  );
-};
+const AppStack = createStackNavigator<AppRoutes>()
 
 export default function App() {
-  return (
-    <LoadAssets {...{ fonts }}>
-      <AuthenticationNavigator />
-    </LoadAssets>
-  );
+	return (
+		<ThemeProvider>
+			<LoadAssets {...{ fonts, assets }}>
+				<SafeAreaProvider>
+					<AppStack.Navigator headerMode="none">
+						<AppStack.Screen
+							name="Authentication"
+							component={AuthenticationNavigator}
+						/>
+						<AppStack.Screen
+							name="Home"
+							component={HomeNavigator}
+						/>
+					</AppStack.Navigator>
+				</SafeAreaProvider>
+			</LoadAssets>
+		</ThemeProvider>
+	)
 }
